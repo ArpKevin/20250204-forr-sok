@@ -12,6 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET"){
                 "message" => "A megadott azonosítóval nem található termék: " . $_GET['id']
             ]);
         }
+        else{
+            echo json_encode($termekek);
+        }
+        
     }
     else{
         echo "Helytelen paraméter.";
