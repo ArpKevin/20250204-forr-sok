@@ -67,4 +67,50 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST"){
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 }
+else if ($_SERVER["REQUEST_METHOD"] == "PUT"){
+
+    if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (isset($data['name'], $data['description'], $data['price'], $data['image_name'])
+            && trim($data['name']) !== "" && trim($data['description']) !== "" && is_numeric($data['price']) && trim($data['image_name']) !== ""
+        ){
+
+            $name = mysqli_real_escape_string($conn, $data['name']);
+            $description = mysqli_real_escape_string($conn, $data['description']);
+            $price = doubleval($data['price']);
+            $image_name = mysqli_real_escape_string($conn, $data['image_name']);
+
+            $termekek = mysqli_query($conn, "UPDATE products SET name = '$name', description = '$description', price = $price, image_name = '$image_name' WHERE id = " . $_GET['id']);
+
+            if (!$termekek) {
+                http_response_code(404);
+                echo json_encode([
+                    "status" => "error",
+                    "message" => "A megadott azonosítóval nem található termék: " . $_GET['id']
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            } else {
+                echo json_encode([
+                    "status" => "success",
+                    "data" => "Termék sikeresen frissítve."
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            }
+        }
+        else{
+            http_response_code(400);
+            echo json_encode([
+                "status" => "error",
+                "message" => "Hiányos adatok. Kérjük, töltse ki a név, leírás, ár és kép mezőket."
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+    }
+    else{
+        http_response_code(400);
+        echo json_encode([
+            "status" => "error",
+            "message" => "Hiányzik a termék azonosító (id), vagy nem megfelelő formátumú."
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+}
 ?>
