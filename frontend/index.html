@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <style>
+        table, th, td{
+            border: 1px solid black;
+        }
+        th, td{
+            padding: 20px;
+        }
+        th{
+            background-color: rgba(128, 128, 128, 0.4);
+        }
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+        <div style="overflow-x: auto;">
+            <table>
+                <tr>
+                    <th>Kép</th>
+                    <th>Név</th>
+                    <th>Leírás</th>
+                    <th>Ár</th>
+                </tr>
+                <tr ng-repeat="product in products.data" ng-if="products">
+                    <td><img ng-src="img/{{product.image_name}}" alt="{{product.name}}" width="200" height="200"></td>
+                    <td>{{product.name}}</td>
+                    <td>{{product.description}}</td>
+                    <td>{{product.price}}</td>
+                </tr>
+            </table>
+        </div>
+    <h1 ng-if="error">{{error}}</h1>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function($scope, $http) {
+            $http.get("products.json")
+            .then(function(response) {
+                $scope.products = response.data;
+            })
+            .catch(function(error) {
+                $scope.error = "Beolvasási hiba.";
+            });
+        });
+    </script>
+</body>
+</html>
